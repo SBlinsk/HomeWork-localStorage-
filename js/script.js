@@ -9,107 +9,88 @@
 
 "use strict";
 
-class Input {
-  constructor() {
-    this.form = document.createElement("form");
-    this.input = document.createElement("input");
-    this.button = document.createElement("input");
-    this.ul = document.createElement("ul");
-    this.input.setAttribute("type", "text");
-    this.button.setAttribute("type", "submit");
-    this.button.setAttribute("value", "Добавить");
-    this.ul.textContent = "List";
-    this.span = document.createElement("span");
-    this.storageId = 0;
-  }
-  render() {
-    document.body.appendChild(this.form);
-    document.body.appendChild(this.ul);
-    this.form.appendChild(this.input);
-    this.form.appendChild(this.button);
-    this.form.addEventListener("submit", (event) => {
-      event.preventDefault();
+function createForm() {
+  const form = document.createElement("form");
+  const input = document.createElement("input");
+  const button = document.createElement("input");
+  const ul = document.createElement("ul");
 
-      const value = this.input.value;
-      if (!this.input.value) {
-        this.span.remove();
-        this.span.textContent = "Вы ничего не ввели";
-        document.body.insertBefore(this.span, this.ul);
-      } else {
-        this.span.remove();
-        const li = document.createElement("li");
-        const button = document.createElement("button");
-        button.textContent = "Delete";
-
-        li.textContent = value;
-        this.ul.appendChild(li);
-        li.appendChild(button);
-        this.input.value = "";
-
-        button.addEventListener("click", () => {
-          li.remove();
-        });
-
-        // localStorage.setItem(this.storageId, value);
-        // this.storageId++;
-      }
-    });
-  }
+  input.setAttribute("type", "text");
+  input.setAttribute("name", "input");
+  button.setAttribute("type", "submit");
+  button.setAttribute("value", "Добавить");
+  ul.textContent = "List";
+  document.body.appendChild(form);
+  document.body.appendChild(ul);
+  form.appendChild(input);
+  form.appendChild(button);
+  return form;
 }
 
-const input = new Input();
-input.render();
+function listCreator(form) {
+  const data = localStorage.getItem("data");
+  const listArr = JSON.parse(data);
+  console.log(listArr);
 
-// "use strict";
+  const ul = document.querySelector("ul");
 
-// class Input {
-//   constructor() {
-//     this.form = document.createElement("form");
-//     this.input = document.createElement("input");
-//     this.button = document.createElement("input");
-//     this.ul = document.createElement("ul");
-//     this.input.setAttribute("type", "text");
-//     this.button.setAttribute("type", "submit");
-//     this.button.setAttribute("value", "Добавить");
-//     this.ul.textContent = "List";
-//     this.span = document.createElement("span");
-//     this.storageId = 0;
-//     for (let i = 0; i < localStorage.length; i++) {
-//         const key = localStorage.key(i);
-//         const value = localStorage.getItem(key);
-//         const li = document.createElement("li");
-//         li.textContent = value;
-//         this.ul.appendChild(li);
-//         this.storageId++;
-//       }
-//   }
-//   render() {
-//     document.body.appendChild(this.form);
-//     document.body.appendChild(this.ul);
-//     this.form.appendChild(this.input);
-//     this.form.appendChild(this.button);
-//     this.form.addEventListener("submit", (event) => {
-//       event.preventDefault();
+  for (let i = 0; i < listArr.length; i++) {
+    const li = document.createElement("li");
+    const button = document.createElement("button");
+    li.textContent = listArr[i];
+    button.textContent = "Delete";
+    ul.appendChild(li);
+    li.appendChild(button);
+  }
 
-//       const value = this.input.value;
-//       if (!this.input.value) {
-//         this.span.remove();
-//         this.span.textContent = "Вы ничего не ввели";
-//         document.body.insertBefore(this.span, this.ul);
-//       } else {
-//         this.span.remove();
-//         const li = document.createElement("li");
-//         li.textContent = value;
-//         this.ul.appendChild(li);
-//         this.input.value = "";
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = event.target.elements.input.value;
+    if (!value) {
+      const oldSpan = document.querySelector("span");
+      if (oldSpan) {
+        oldSpan.remove();
+      }
 
-//         localStorage.setItem(this.storageId, value);
-//         this.storageId++;
+      const span = document.createElement("span");
+      span.textContent = "Вы ничего не ввели";
+      document.body.insertBefore(span, ul);
+    } else {
+      const oldSpan = document.querySelector("span");
 
-//       }
-//     });
-//   }
-// }
+      if (oldSpan) {
+        oldSpan.remove();
+      }
 
-// const input = new Input();
-// input.render();
+      const li = document.createElement("li");
+      const button = document.createElement("button");
+      button.textContent = "Delete";
+      li.textContent = value;
+
+      ul.appendChild(li);
+      li.appendChild(button);
+      let myArray = JSON.parse(localStorage.getItem("data"));
+      myArray.push(value);
+      localStorage.setItem("data", JSON.stringify(myArray));
+      deleteListElements(list);
+    }
+  });
+  return ul;
+}
+function deleteListElements(ul) {
+  const buttons = ul.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const value = button.parentNode.textContent;
+      const listItem = button.parentNode;
+      listItem.remove();
+      let myArray = JSON.parse(localStorage.getItem("data"));
+      myArray.pop(value);
+      localStorage.setItem("data", JSON.stringify(myArray));
+    });
+  });
+}
+
+const form = createForm();
+const list = listCreator(form);
+deleteListElements(list);
