@@ -8,6 +8,14 @@
 // В storage нужно записывать только данные, а не DOM элементы
 
 "use strict";
+const storage = {
+  saveToLocalStorage(key, value) {
+   return  localStorage.setItem(key, value);
+  },
+  getFromLocalStorage(key) {
+    return localStorage.getItem(key);
+  },
+};
 
 function createForm() {
   const form = document.createElement("form");
@@ -28,10 +36,8 @@ function createForm() {
 }
 
 function listCreator(form) {
-  const data = localStorage.getItem("data");
+  const data = storage.getFromLocalStorage("data");
   const listArr = JSON.parse(data);
-  console.log(listArr);
-
   const ul = document.querySelector("ul");
 
   for (let i = 0; i < listArr.length; i++) {
@@ -71,7 +77,7 @@ function listCreator(form) {
       li.appendChild(button);
       let myArray = JSON.parse(localStorage.getItem("data"));
       myArray.push(value);
-      localStorage.setItem("data", JSON.stringify(myArray));
+      storage.saveToLocalStorage("data", JSON.stringify(myArray));
       deleteListElements(list);
     }
   });
@@ -84,9 +90,9 @@ function deleteListElements(ul) {
       const value = button.parentNode.textContent;
       const listItem = button.parentNode;
       listItem.remove();
-      let myArray = JSON.parse(localStorage.getItem("data"));
+      let myArray = JSON.parse(storage.getFromLocalStorage("data"));
       myArray.pop(value);
-      localStorage.setItem("data", JSON.stringify(myArray));
+      storage.saveToLocalStorage("data", JSON.stringify(myArray));
     });
   });
 }
