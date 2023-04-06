@@ -49,21 +49,20 @@ function listCreator(form) {
   for (let i = 0; i < listArr.length; i++) {
     liCreator(ul, listArr[i]);
   }
+  let oldSpan;
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const value = event.target.elements.input.value;
     if (!value) {
-      const oldSpan = document.querySelector("span");
       if (oldSpan) {
         oldSpan.remove();
       }
-
-      const span = document.createElement("span");
-      span.textContent = "Вы ничего не ввели";
-      document.body.insertBefore(span, ul);
+      oldSpan = document.createElement("span");
+      oldSpan.textContent = "Вы ничего не ввели";
+      document.body.insertBefore(oldSpan, ul);
     } else {
-      const oldSpan = document.querySelector("span");
+      oldSpan = document.querySelector("span");
 
       if (oldSpan) {
         oldSpan.remove();
