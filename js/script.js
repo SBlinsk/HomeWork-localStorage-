@@ -10,7 +10,7 @@
 "use strict";
 const storage = {
   saveToLocalStorage(key, value) {
-   return  localStorage.setItem(key, value);
+    return localStorage.setItem(key, value);
   },
   getFromLocalStorage(key) {
     return localStorage.getItem(key);
@@ -37,7 +37,13 @@ function createForm() {
 
 function listCreator(form) {
   const data = storage.getFromLocalStorage("data");
-  const listArr = JSON.parse(data);
+  let listArr;
+  try {
+    listArr = JSON.parse(data);
+  } catch (error) {
+    console.error("JSON Parse Error", error);
+  }
+
   const ul = document.querySelector("ul");
 
   for (let i = 0; i < listArr.length; i++) {
@@ -75,7 +81,12 @@ function listCreator(form) {
 
       ul.appendChild(li);
       li.appendChild(button);
-      let myArray = JSON.parse(localStorage.getItem("data"));
+      let myArray;
+      try {
+        myArray = JSON.parse(localStorage.getItem("data"));
+      } catch (error) {
+        console.error("JSON parse error", error);
+      }
       myArray.push(value);
       storage.saveToLocalStorage("data", JSON.stringify(myArray));
       deleteListElements(list);
@@ -90,7 +101,12 @@ function deleteListElements(ul) {
       const value = button.parentNode.textContent;
       const listItem = button.parentNode;
       listItem.remove();
-      let myArray = JSON.parse(storage.getFromLocalStorage("data"));
+      let myArray;
+      try {
+        myArray = JSON.parse(storage.getFromLocalStorage("data"));
+      } catch (error) {
+        console.error("JSON parse error", error);
+      }
       myArray.pop(value);
       storage.saveToLocalStorage("data", JSON.stringify(myArray));
     });
