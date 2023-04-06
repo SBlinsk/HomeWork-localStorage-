@@ -47,12 +47,7 @@ function listCreator(form) {
   const ul = document.querySelector("ul");
 
   for (let i = 0; i < listArr.length; i++) {
-    const li = document.createElement("li");
-    const button = document.createElement("button");
-    li.textContent = listArr[i];
-    button.textContent = "Delete";
-    ul.appendChild(li);
-    li.appendChild(button);
+    liCreator(ul, listArr[i]);
   }
 
   form.addEventListener("submit", (event) => {
@@ -73,14 +68,8 @@ function listCreator(form) {
       if (oldSpan) {
         oldSpan.remove();
       }
+      liCreator(ul, value);
 
-      const li = document.createElement("li");
-      const button = document.createElement("button");
-      button.textContent = "Delete";
-      li.textContent = value;
-
-      ul.appendChild(li);
-      li.appendChild(button);
       let myArray;
       try {
         myArray = JSON.parse(localStorage.getItem("data"));
@@ -111,6 +100,16 @@ function deleteListElements(ul) {
       storage.saveToLocalStorage("data", JSON.stringify(myArray));
     });
   });
+}
+
+function liCreator(parent, textContent) {
+  const li = document.createElement("li");
+  const button = document.createElement("button");
+  li.textContent = textContent;
+  button.textContent = "Delete";
+  parent.appendChild(li);
+  li.appendChild(button);
+  return li;
 }
 
 const form = createForm();
