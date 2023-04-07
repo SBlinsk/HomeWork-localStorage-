@@ -9,11 +9,13 @@
 
 "use strict";
 const storage = {
-  saveToLocalStorage(key, value) {
-    return localStorage.setItem(key, value);
+  save(key, value) {
+    const data = JSON.stringify(value);
+    return localStorage.setItem(key, data);
   },
-  getFromLocalStorage(key) {
-    return localStorage.getItem(key);
+  get(key) {
+    const data = localStorage.getItem(key);
+    return JSON.parse(data);
   },
 };
 
@@ -36,16 +38,15 @@ function createForm() {
 }
 
 function listCreator(form) {
-  const data = storage.getFromLocalStorage("data");
-  let listArr;
+  // const data = storage.getFromLocalStorage("data");
+  let listArr = [];
   try {
-    listArr = JSON.parse(data);
+    listArr = storage.get("data") || [];
   } catch (error) {
-    console.error("JSON Parse Error", error);
+    throw error("JSON Parse Error", error);
   }
 
   const ul = document.querySelector("ul");
-
   for (let i = 0; i < listArr.length; i++) {
     liCreator(ul, listArr[i]);
   }
@@ -71,12 +72,12 @@ function listCreator(form) {
 
       let myArray;
       try {
-        myArray = JSON.parse(localStorage.getItem("data"));
+        myArray = storage.get("data") || [];
       } catch (error) {
         console.error("JSON parse error", error);
       }
       myArray.push(value);
-      storage.saveToLocalStorage("data", JSON.stringify(myArray));
+      storage.save("data", myArray);
       deleteListElements(list);
     }
   });
@@ -86,17 +87,22 @@ function deleteListElements(ul) {
   const buttons = ul.querySelectorAll("button");
   buttons.forEach((button) => {
     button.addEventListener("click", () => {
-      const value = button.parentNode.textContent;
+      const value = button.getAttribute('data-text');
       const listItem = button.parentNode;
       listItem.remove();
       let myArray;
       try {
-        myArray = JSON.parse(storage.getFromLocalStorage("data"));
+        myArray = storage.get("data") || [];
+        console.log(myArray);
       } catch (error) {
         console.error("JSON parse error", error);
       }
-      myArray.pop(value);
-      storage.saveToLocalStorage("data", JSON.stringify(myArray));
+      const index = myArray.indexOf(value);
+      if (index !== -1) {
+        myArray.splice(index, 1);
+      }
+      storage.save("data", myArray);
+      
     });
   });
 }
@@ -106,6 +112,7 @@ function liCreator(parent, textContent) {
   const button = document.createElement("button");
   li.textContent = textContent;
   button.textContent = "Delete";
+  button.setAttribute('data-text',textContent);
   parent.appendChild(li);
   li.appendChild(button);
   return li;
