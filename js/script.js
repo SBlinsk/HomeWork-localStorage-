@@ -18,7 +18,8 @@ const storage = {
       const data = localStorage.getItem(key);
       return JSON.parse(data);
     } catch (error) {
-      return [], console.error("JSON parse error", error);
+      console.error("JSON parse error", error);
+      return [];
     }
   },
 };
