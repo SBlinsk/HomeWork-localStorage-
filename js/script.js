@@ -14,8 +14,12 @@ const storage = {
     return localStorage.setItem(key, data);
   },
   get(key) {
-    const data = localStorage.getItem(key);
-    return JSON.parse(data);
+    try {
+      const data = localStorage.getItem(key);
+      return JSON.parse(data);
+    } catch (error) {
+      return [], console.error("JSON parse error", error);
+    }
   },
 };
 
@@ -38,8 +42,8 @@ function createForm() {
 }
 
 function listCreator(form) {
-  // const data = storage.getFromLocalStorage("data");
   let listArr = [];
+  listArr = storage.get("data");
   try {
     listArr = storage.get("data") || [];
   } catch (error) {
@@ -70,12 +74,7 @@ function listCreator(form) {
       }
       liCreator(ul, value);
 
-      let myArray;
-      try {
-        myArray = storage.get("data") || [];
-      } catch (error) {
-        console.error("JSON parse error", error);
-      }
+      let myArray=storage.get('data');
       myArray.push(value);
       storage.save("data", myArray);
       deleteListElements(list);
@@ -90,13 +89,7 @@ function deleteListElements(ul) {
       const value = button.getAttribute('data-text');
       const listItem = button.parentNode;
       listItem.remove();
-      let myArray;
-      try {
-        myArray = storage.get("data") || [];
-        console.log(myArray);
-      } catch (error) {
-        console.error("JSON parse error", error);
-      }
+      let myArray=storage.get('data');
       const index = myArray.indexOf(value);
       if (index !== -1) {
         myArray.splice(index, 1);
